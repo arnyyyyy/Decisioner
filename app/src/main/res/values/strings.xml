@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Decisioner</string>
+    <string name="yes">Да</string>
+    <string name="mostlyYes">Скорее да</string>
+    <string name="mostlyNo">Скорее нет</string>
+    <string name="no">Нет</string>
+    <string name="question1">Я уверен, что вещь мне нужна</string>
+    <string name="question2">У меня нет неиспользованной вещи, решающей эту же задачу</string>
+    <string name="question3">Меня устраивает качество товара</string>
+    <string name="question4">Для этой вещи есть место дома</string>
+    <string name="answer1">Судя по ответам, эта вещь Вам подходит</string>
+    <string name="answer2">Сделайте перерыв и вернитесь к покупке позже</string>
+    <string name="answer3">" Скорее всего, это не то, что Вам нужно"</string>
+    <string name="restart">Пройти заново</string>
+</resources>
