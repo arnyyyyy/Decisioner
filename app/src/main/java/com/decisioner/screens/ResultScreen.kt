@@ -1,5 +1,6 @@
 package com.decisioner.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,10 +22,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.decisioner.R
+import ru.rustore.sdk.review.RuStoreReviewManager
+import ru.rustore.sdk.review.RuStoreReviewManagerFactory
+import ru.rustore.sdk.review.model.ReviewInfo
 
 @Composable
 fun ResultScreen(totalScore: Float, onRestart: () -> Unit) {
     val context = LocalContext.current
+    val manager = RuStoreReviewManagerFactory.create(context)
+
+    val reviewInfoState = remember { mutableStateOf<ReviewInfo?>(null) }
+    val isReviewRequested = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -78,5 +88,28 @@ fun ResultScreen(totalScore: Float, onRestart: () -> Unit) {
         Button(onClick = onRestart) {
             Text(text = context.getString(R.string.restart), fontSize = 16.sp)
         }
+
+        if (!isReviewRequested.value) {
+            Log.d("rustore", "Try to get feedback")
+            manager.requestReviewFlow()
+                .addOnSuccessListener { reviewInfo ->
+                    reviewInfoState.value = reviewInfo
+                    isReviewRequested.value = true
+                    launchReviewFlow(manager, reviewInfo)
+                }
+                .addOnFailureListener { throwable ->
+                  Log.e("feedback error:", throwable.message.toString())
+                }
+        }
     }
+}
+
+private fun launchReviewFlow(manager: RuStoreReviewManager, reviewInfo: ReviewInfo) {
+    manager.launchReviewFlow(reviewInfo)
+        .addOnSuccessListener {
+
+        }
+        .addOnFailureListener { throwable ->
+            Log.e("feedback error:", throwable.message.toString())
+        }
 }
